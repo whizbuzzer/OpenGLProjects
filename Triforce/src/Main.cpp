@@ -48,7 +48,7 @@ int main() {
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);  // Check Note.md
 
 	// 800x800 pixels:
-	GLFWwindow* window = glfwCreateWindow(800, 800, "OpenGLProject0", NULL, NULL);
+	GLFWwindow* window = glfwCreateWindow(1024, 1024, "Triforce", NULL, NULL);
 
 	// In case window fails to create:
 	if (window == NULL) {
@@ -63,7 +63,7 @@ int main() {
 	gladLoadGL();  // Loads needed configurations for OpenGL
 
 	// Bottom-left to top-right https://registry.khronos.org/OpenGL-Refpages/gl4/html/glViewport.xhtml
-	glViewport(0, 0, 800, 800);
+	glViewport(0, 0, 1024, 1024);
 
 	Shader shaderProgram("../shaders/triangle.vert", "../shaders/triangle.frag");
 
@@ -89,18 +89,22 @@ int main() {
 
 	// Unbinding is first done for the VBO, then for VAO, and then for EBO (VERY IMPORTANT!!!)
 
-
-
-
+	float prev_time = float(glfwGetTime());
+	float angle = 0.0f;
 
 	// Making sure that the window does not close instantly:
 	while (!glfwWindowShouldClose(window)) {
-		glClearColor(0.07f, 0.13f, 0.17f, 1.0f);  // Background color Navy-blue (RGBA)
+		float curr_time = float(glfwGetTime());
+		if (curr_time - prev_time >= 0.1f) {
+			angle += 0.1f;
+			prev_time = curr_time;
+		}
+		glClearColor(float(sin(angle)), float(cos(angle)), float(tan(angle)), 1.0f);  // Background color Navy-blue (RGBA)
 		glClear(GL_COLOR_BUFFER_BIT);			  // Cleaning back buffer and assigning it new color
 
 		shaderProgram.Activate();
 		// Uniforms can be assigned value only after activating the shader:
-		glUniform1f(uniID, 0.5f);
+		glUniform1f(uniID, 0.7f * sin(angle));
 
 		VAO1.Bind();
 
