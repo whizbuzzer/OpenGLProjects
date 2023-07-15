@@ -104,7 +104,7 @@ int main() {
 
 		shaderProgram.Activate();
 		// Uniforms can be assigned value only after activating the shader:
-		glUniform1f(uniID, 0.7f * sin(angle));
+		glUniform1f(uniID, 0.7f * sin(angle));  // scale
 
 		VAO1.Bind();
 

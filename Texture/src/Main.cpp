@@ -24,27 +24,41 @@
  * Z coordinate would not be considered for 2D
  * Coordinates are normalized, so they gotta be in [-1, 1]:
  */
+
+GLfloat n_textures = 2;  // Total number of textures will be the square of this
+//GLfloat vertices[] = {
+//	// COORDINATES        / COLORS             / COORDINATES TO MAP TEXTURE ONTO VERTICES  //
+//		-0.5f, -0.5f, 0.0f,   1.0f,  0.0f, 0.0f,                 0.0f,              0.0f,  // Lower-left
+//		-0.5f,  0.5f, 0.0f,   0.0f,  1.0f, 0.0f,                 0.0f, n_textures * 1.0f,  // Upper-left
+//		 0.5f,  0.5f, 0.0f,   0.0f,  0.0f, 1.0f,    n_textures * 1.0f, n_textures * 1.0f,  // Upper-right
+//		 0.5f, -0.5f, 0.0f,   1.0f,  1.0f, 0.0f,    n_textures * 1.0f,              0.0f   // Lower-right
+//};
+
+// To creat a triangle:
 GLfloat vertices[] = {
-	// COORDINATES        / COLORS              / COORDINATES TO MAP TEXTURE ONTO VERTICES //
-		-0.5f, -0.5f, 0.0f,   1.0f,  0.0f, 0.0f,    0.0f, 0.0f,  // Lower-left
-		-0.5f,  0.5f, 0.0f,   0.0f,  1.0f, 0.0f,    0.0f, 1.0f,  // Upper-left
-		 0.5f,  0.5f, 0.0f,   0.0f,  0.0f, 1.0f,    1.0f, 1.0f,  // Upper-right
-		 0.5f, -0.5f, 0.0f,   1.0f,  1.0f, 1.0f,    1.0f, 0.0f   // Lower-right
+	// COORDINATES        / COLORS             / COORDINATES TO MAP TEXTURE ONTO VERTICES  //
+		-0.5f, -0.5f, 0.0f,   1.0f,  0.0f, 0.0f,                -1.0f,             -1.0f,  // Lower-left
+		 0.0f,  0.5f, 0.0f,   0.0f,  1.0f, 0.0f,                 0.5f, n_textures * 1.0f,  // Upper
+		 0.5f, -0.5f, 0.0f,   1.0f,  1.0f, 0.0f,    n_textures * 1.0f,             -1.0f   // Lower-right
 };
 // If a primitive (in this case vertex) has a color defined, then OpenGL will automatically
 // create a gradient from one color to another. This is called interpolation.
 
 // Index array for correctly going through vertices and avoiding duplicates:
-GLuint indices[] = {
-	0, 2, 1,  // Upper-left triangle
-	0, 3, 2,  // Lower-right triangle
-};
+//GLuint indices[] = {
+//	0, 2, 1,  // Upper-left triangle
+//	0, 3, 2,  // Lower-right triangle
+//};
 /*  _ _ _
  *  |   /|
  *  |  / |
  *  | /  |
  *  |/___|
  */
+GLuint indices[] = {
+	0, 2, 1,  // Lower-left triangle
+	//0, 3, 2,  // Lower-right triangle
+};
 
 int main() {
 	glfwInit();
@@ -124,7 +138,8 @@ int main() {
 
 		// Drawing our object:
 		// glDrawArrays(GL_TRIANGLES, 0, 3);
-		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+		// glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+		glDrawElements(GL_TRIANGLES, 3, GL_UNSIGNED_INT, 0);
 		glfwSwapBuffers(window);				  // To update graphics
 
 		glfwPollEvents();  // Processes all pending events to prevent non-responsiveness
