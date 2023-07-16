@@ -1,0 +1,30 @@
+# Steps to follow after creating new project in the solution:
+
+1. Create "src" folder inside project folder in the files explorer
+
+2. Create a "Main.cpp" in the "src" folder
+
+3. Add "Main.cpp" as an existing item in the project's "Source Files" in the "Solution Explorer" inside Visual Studio
+
+4. Right-click on the project in "Solution Explorer"->"Properties"
+
+5. "VC++ Directories"->"Include Directories"->"<Edit>
+
+6. Add "Libraries/include" and "include" folders here.
+
+7. "VC++ Directories"->"Library Directories"->"<Edit>
+
+8. Add "Libraries/lib" and "lib" folders here.
+
+9. "Linker"->"Input"->"Additional Dependencies"->"<Edit>"
+
+10. Type in:
+	
+	glfw.lib
+	opengl32.lib
+
+11. Add "glad.c" to "Source Files" in the Solution Explorer
+
+12. Add relevant .h files from "include" to "Header Files" in Solution Explorer
+
+13. Add corresonding .cpp files from "lib" to "Source Files" in Solution Explorer

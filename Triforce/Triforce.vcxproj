@@ -139,7 +139,6 @@
   <ItemGroup>
     <ClInclude Include="..\include\EBO.h" />
     <ClInclude Include="..\include\shaderClass.h" />
-    <ClInclude Include="..\include\Texture.h" />
     <ClInclude Include="..\include\VAO.h" />
     <ClInclude Include="..\include\VBO.h" />
   </ItemGroup>

@@ -70,7 +70,7 @@ int main() {
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);  // Check Note.md
 
 	// 800x800 pixels:
-	GLFWwindow* window = glfwCreateWindow(800, 800, "OpenGLProject0", NULL, NULL);
+	GLFWwindow* window = glfwCreateWindow(800, 800, "Texture", NULL, NULL);
 	
 	// In case window fails to create:
 	if (window == NULL) {

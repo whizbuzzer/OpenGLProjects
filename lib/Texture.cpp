@@ -18,16 +18,9 @@ Texture::Texture(const char* imagePath, GLenum texType, GLenum slot, GLenum form
 	glTexParameteri(texType, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 
 	// OpenGL has S(X), T(Y) and R(Z) axes. Since our image is 2D, setting for R axis is not needed:
-	// glTexParameteri(texType, GL_TEXTURE_WRAP_S, GL_REPEAT);
-	// glTexParameteri(texType, GL_TEXTURE_WRAP_T, GL_REPEAT);
+	glTexParameteri(texType, GL_TEXTURE_WRAP_S, GL_REPEAT);
+	glTexParameteri(texType, GL_TEXTURE_WRAP_T, GL_REPEAT);
 
-	// These will map texture border color to the borders, and leave only the middle texture as it is:
-	glTexParameteri(texType, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER);
-	glTexParameteri(texType, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER);
-
-	// To use GL_CLAMP_TO_BORDER, you would also have to use glTexParameterfv():
-	float flatColor[] = { 0.8f, 0.76f, 0.7f, 1.0f };  // Texture border color
-	glTexParameterfv(GL_TEXTURE_2D, GL_TEXTURE_BORDER_COLOR, flatColor);
 
 	// Generating image texture:
 	glTexImage2D(texType, 0, GL_RGBA, imgWidth, imgHeight, 0, format, pixelType, bytes);

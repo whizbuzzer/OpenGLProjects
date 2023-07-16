@@ -24,9 +24,6 @@
     <ClInclude Include="..\include\shaderClass.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\include\Texture.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="..\include\VAO.h">
       <Filter>Header Files</Filter>
     </ClInclude>
