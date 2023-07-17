@@ -131,7 +131,7 @@ int main() {
 		
 		shaderProgram.Activate();
 		// Uniforms can be assigned value only after activating the shader:
-		glUniform1f(uniID, 0.5f);
+		glUniform1f(uniID, 0.5f);  // https://registry.khronos.org/OpenGL-Refpages/gl4/html/glUniform.xhtml
 		sadPepe.Bind();
 
 		VAO1.Bind();

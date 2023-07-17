@@ -3,8 +3,8 @@
 #include "Texture.h"
 
 
-Texture::Texture(const char* imagePath, GLenum texType, GLenum slot, GLenum format, GLenum pixelType) {
-	type = texType;
+Texture::Texture(const char* imagePath, GLenum texType, GLenum slot, GLenum format, GLenum pixelType) : type(texType) {
+	//type = texType;
 	int imgWidth, imgHeight, nColorChannels;
 	stbi_set_flip_vertically_on_load(true);
 	unsigned char* bytes = stbi_load(imagePath, &imgWidth, &imgHeight, &nColorChannels, 0);

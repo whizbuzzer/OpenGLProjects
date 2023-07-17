@@ -18,24 +18,24 @@ Pen and touch | No pen or touch input is available for this display
 ---
 ## GLFW (Graphics Library FrameWork)
 
--GLFW provides us with the bare necessities required for rendering objects to the screen. OpenGL itself does not have rendering functionalities.
+- GLFW provides us with the bare necessities required for rendering objects to the screen. OpenGL itself does not have rendering functionalities.
 
 ---
 ## GLAD
 
--[GLAD](https://www.khronos.org/opengl/wiki/OpenGL_Loading_Library#glad_(Multi-Language_GL/GLES/EGL/GLX/WGL_Loader-Generator)) is a [Loader-Generator](https://github.com/Dav1dde/glad) for the OpenGL framework.
+- [GLAD](https://www.khronos.org/opengl/wiki/OpenGL_Loading_Library#glad_(Multi-Language_GL/GLES/EGL/GLX/WGL_Loader-Generator)) is a [Loader-Generator](https://github.com/Dav1dde/glad) for the OpenGL framework.
 
--There are multiple versions of OpenGL. The location of most of its functions is not known at compile-time and needs to be queried at run-time. GLFW helps us at compile-time only. This is where glad comes into the picture. GLAD manages function pointers for OpenGL (OpenGL LOVES using pointers and references for its methods)
+- There are multiple versions of OpenGL. The location of most of its functions is not known at compile-time and needs to be queried at run-time. GLFW helps us at compile-time only. This is where glad comes into the picture. GLAD manages function pointers for OpenGL (OpenGL LOVES using pointers and references for its methods)
 
--Created the Triforce! 
+- Created the Triforce! 
 
 ![Triforce](./data/Triforce.png)
 
 ---
 ## GLM
 
--[GLM](https://glm.g-truc.net/0.9.9/index.html) is a mathematics library specifically made for mathematical operations in OpenGL projects, mainly stuff such Linear algebraic operation.
+- [GLM](https://glm.g-truc.net/0.9.9/index.html) is a mathematics library specifically made for mathematical operations in OpenGL projects, mainly stuff such Linear algebraic operation.
 
--Send in the memes!
+- Send in the memes!
 
 ![SadPepe](./data/spp_rotating.gif)
