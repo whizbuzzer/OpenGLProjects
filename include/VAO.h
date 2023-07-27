@@ -1,5 +1,3 @@
-#pragma once
-
 // Lets C++ know not to open up file twice and avoids variable clashes:
 #ifndef  VAO_CLASS_H
 #define VAO_CLASS_H

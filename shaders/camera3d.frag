@@ -1,6 +1,6 @@
 #version 330 core    // GLSL version
 
-out vec4 FragColor;  // RGBAA
+out vec4 FragColor;  // RGBA
 
 in vec3 color;  // Inputs and outputs MUST have the same name
 

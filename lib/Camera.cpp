@@ -4,24 +4,24 @@
 
 Camera::Camera(int width_, int height_, glm::vec3 position) : width(width_), height(height_), Position(position) {}
 
-void Camera::Matrix(float FOVdeg, float nearPlane, float farPlane, Shader& shader, const char* uniform) {
+void Camera::updateMatrix(float FOVdeg, float nearPlane, float farPlane) {
 	glm::mat4 view = glm::mat4(1.0f);
 	glm::mat4 projection = glm::mat4(1.0f);
 
+	// Makes camera look at the right direction from the right position
 	view = glm::lookAt(Position, Position + Orientation, Up);
+	// Dictates how much of the graphics would appear in the visualizer window
 	projection = glm::perspective(glm::radians(FOVdeg), (float)(width / height), nearPlane, farPlane);
 
+	cameraMatrix = projection * view;
+}
+
+void Camera::Matrix(Shader& shader, const char* uniform) {
 	// Exporting matrix to vertex shader:
-	glUniformMatrix4fv(glGetUniformLocation(shader.ID, uniform), 1, GL_FALSE, glm::value_ptr(projection * view));
+	glUniformMatrix4fv(glGetUniformLocation(shader.ID, uniform), 1, GL_FALSE, glm::value_ptr(cameraMatrix));
 }
 
-void Camera::key_callback(GLFWwindow* window, int key, int scancode, int action, int mods) {
-	Camera* camera =
-		static_cast<Camera*>(glfwGetWindowUserPointer(window));
-	if (key == GLFW_KEY_I && action == GLFW_PRESS)
-		invertAxes = -1;
-}
-
+// Gotta find how to print which key was pressed on the visualizer
 void Camera::Inputs(GLFWwindow* window) {
 	/* Key Inputs */
 	// Front
@@ -38,7 +38,7 @@ void Camera::Inputs(GLFWwindow* window) {
 	}
 	// Right
 	if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS) {
-		Position += speed * glm::normalize(glm::cross(Orientation, Up));;
+		Position += speed * glm::normalize(glm::cross(Orientation, Up));
 	}
 	// Up
 	if (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS) {
@@ -49,20 +49,36 @@ void Camera::Inputs(GLFWwindow* window) {
 		Position += speed * -Up;
 	}
 
+	// Gotta still fix rotating
+	// Rotating about Y clockwise:
+	if (glfwGetKey(window, GLFW_KEY_LEFT) == GLFW_PRESS) {
+		// Rotate about Y-axis (left and right):
+		Orientation = glm::rotate(Orientation, glm::radians(invertAxes * 0.01f), Up);
+		Position += speed * glm::normalize(glm::cross(Orientation, Up));
+	}
+
+	// Rotating about Y counter-clockwise:
+	if (glfwGetKey(window, GLFW_KEY_RIGHT) == GLFW_PRESS) {
+		// Rotate about Y-axis (left and right):
+		Orientation = glm::rotate(Orientation, glm::radians(invertAxes * -0.01f), Up);
+		Position += speed * -glm::normalize(glm::cross(Orientation, Up));
+	}
+
 	// Invert camera axes:
 	if (glfwGetKey(window, GLFW_KEY_I) == GLFW_PRESS) {
-		if (!iPressed)
-			invertAxes *= -1;
-		iPressed = true;
-	} else if (glfwGetKey(window, GLFW_KEY_I) == GLFW_RELEASE) { // Move slow
+		if (!iPressed) {
+			invertAxes *= -1.0f;
+			iPressed = true;
+		}
+	} else if (glfwGetKey(window, GLFW_KEY_I) == GLFW_RELEASE) {
 		iPressed = false;
-	}  // Gotta figure out a key toggle option
+	}
 
-	// Move fast
-	if (glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS) {
-		speed = 0.4f;
-	} else if (glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_RELEASE) { // Move slow
+	// Move speed adjustment
+	if (glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS) {  // Move fast
 		speed = 0.01f;
+	} else if (glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_RELEASE) {  // Move slow
+		speed = 0.001f;
 	}  // Gotta figure out a key toggle option
 
 	/* Mouse Inputs */
@@ -93,7 +109,7 @@ void Camera::Inputs(GLFWwindow* window) {
 			Orientation = newOrientation;
 		}
 
-		// Rotate about Y-axis:
+		// Rotate about Y-axis (left and right):
 		Orientation = glm::rotate(Orientation, glm::radians(invertAxes * rotY), Up);
 
 		// Sets cursor to center of screen to prevent it from roaming around:

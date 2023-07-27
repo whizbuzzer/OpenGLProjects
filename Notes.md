@@ -16,6 +16,15 @@
 - When working with OpenGL, the developer needs to retrieve "function pointers" for each OpenGL function from the graphics driver at runtime. This process can be platform-specific and cumbersome, involving various platform-specific APIs and extensions, if it were to be done manually. Glad streamlines this process by simplifying code and reducing platform-specific dependencies, allowing developers to focus on the actual OpenGL rendering logic.
 
 ---
+## #pragma once vs #ifndef
+
+- Both of these are __include guards__; the prevent duplicate declarations and make sure that the header file is compiled only once.
+
+- using #ifndef makes the compiler check if a unique value (in this case HEADERFILE_H) is defined. Then if it's not defined, it defines it and continues to the rest of the page. When the code is included again, the first ifndef fails, resulting in a blank file. This prevents double declaration of any identifiers such as types, enums and static variables.
+
+- [Further information](https://en.wikipedia.org/wiki/Include_guard)
+
+---
 ## Graphics Pipeline:
 
 - Vertex data[] -> Vertex Shader -> Shape Assembly -> Geometry Shader -> Rasterization -> Fragment Shader -> Tests and blending
@@ -147,3 +156,31 @@ Provides input to the fragment shader to fill the faces with pixels | Takes inpu
     5. **Screen Coordinates:**
         * These are *Clip coordinates* transformed to the coordinate range defined by the `glViewPort`
         * These are the coordinates sent to the rasterizer to be turned into fragments
+
+---
+## Lighting
+
+- Basic lighting in OpenGL comes in [5 types](https://learnopengl.com/Lighting/Basic-Lighting):
+    1. **Ambient:**
+        * Even when a surface is not facing a light source, it will still have some color due to light reflecting off other surfaces
+        * Algorithms used to approximately simulate this "light scattering" are called "global illumination algorithms
+        * Global illumination algorithms however are complicated and expensive to compute
+        * We can therefore use Ambient lighting instead to simulate light scattering in a much simpler manner by just multiplying an ambient constant with the color of that surface
+    2. **Diffuse:**
+        * In this lighting, intensity of a color on a surface is inversely proportional to the angle formed between the light source and the surface.
+        * To calculate this angle, we need the position of the light source and the a way to know the slope of the surface
+        * Traditionally, slope of the surface is represented by a normal vector
+        * Normal vectors are unit vectors of length 1 that help us calculate how light should act on a certain surface
+        * With a light position and a normal, we can take the dot product between the two to get an "intensity" scaling factor with which we can control the light intensity. This is because dot product would represent the cosine of the light source-surface angle
+        * Normals come in 2 main types. Choosing on depends on your mesh and art style:
+        1. **Face normals:** 
+            * These are perpendicular to the face/surface of an object and defines the direction of that face
+            * They provide "flat shading" (blockier/more blocky look)
+        2. **Vertex normals:**
+            * These are normals which poke out of vertices and define how virtual light will bounce off a mesh
+            * They define a smoothing for the underlying mesh
+            * They are perpendicular to the plane created by all vertices adjacent to the vertex that they poke out of
+    3. **Specular:**
+        * This lighting uses [Phong Shading](https://en.wikipedia.org/wiki/Phong_shading)
+        * This lighting is similar to diffuse in the sense that a "gradient" of lighting is formed on the object surfaces
+        * What makes this lighting different from diffuse is that it also considers reflective properties of the object surfaces and the view direction (direction from which we look at the object)

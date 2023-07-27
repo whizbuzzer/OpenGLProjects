@@ -1,5 +1,3 @@
-#pragma once
-
 // Lets C++ know not to open up file twice and avoids variable clashes:
 #ifndef  VBO_CLASS_H
 #define VBO_CLASS_H
