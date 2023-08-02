@@ -12,6 +12,7 @@ class Texture {
 public:
 	GLuint ID;
 	GLenum type;
+	GLuint unit;  // For accomodating multiple textures. Textures are stored in texture units
 
 	Texture(const char* imagePath, GLenum texType, GLenum slot, GLenum format, GLenum pixelType);
 

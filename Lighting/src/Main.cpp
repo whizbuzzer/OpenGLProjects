@@ -1,4 +1,4 @@
-/* Main file for generating 3D graphics */
+/* Main file for generating 3D graphics with lighting */
 
 #include <iostream>
 #include <glad/glad.h>
@@ -17,21 +17,8 @@
 // Aspect ratio:
 const unsigned int width = 800, height = 800;
 
-/* Every 3 floats will represent one coordinate
- * Coordinates are normalized, so they gotta be in [-1, 1]:
- */
-
-//// To creat a pyramid:
-//GLfloat vertices[] = {
-//	// COORDINATES     / COLORS                / COORDINATES TO MAP TEXTURE ONTO VERTICES  //
-//	-0.5f,  0.0f,  0.5f,   0.83f,  0.70f, 0.44f,    0.0f, 0.0f,  // anterior-left
-//	-0.5f,  0.0f, -0.5f,   0.83f,  0.70f, 0.44f,    5.0f, 0.0f,  // posterior-left
-//	 0.5f,  0.0f, -0.5f,   0.83f,  0.70f, 0.44f,    0.0f, 0.0f,  // posterior-right
-//	 0.5f,  0.0f,  0.5f,   0.83f,  0.70f, 0.44f,    5.0f, 0.0f,  // anterior-right
-//	 0.0f,  0.8f,  0.0f,   0.92f,  0.86f, 0.76f,    2.5f, 5.0f   // top
-//};
-
-/* To creat a pyramid
+/* To create a pyramid
+ * Coordinates are normalized, so they gotta be in [-1, 1]
  * Vertices are duplicated because normals will be different on each side of pyramid
  * Using face normals/flat shading which is more suited for flatter meshes such as cubes and pyramids:
  */
@@ -64,15 +51,6 @@ GLfloat vertices[] = {
 	 0.0f,  0.8f,  0.0f,     0.92f, 0.86f, 0.76f,     2.5f, 5.0f,     0.0f,  0.5f,  0.8f
 };  // It's okay if normals don't have unit length here as they will be normalized later in the shader
 
-//GLuint indices[] = {
-//	0, 1, 2,
-//	0, 2, 3,
-//	0, 1, 4,
-//	1, 2, 4,
-//	2, 3, 4,
-//	3, 0, 4
-//};
-
 GLuint indices[] = {
 	// Bottom face
 	0, 1, 2,
@@ -94,27 +72,38 @@ GLuint indices[] = {
 // Cube to serve as our light source:
 GLfloat lightVertices[] = {
 	// COORDINATES	   //
-	-0.1f, -0.1f,  0.1f,
-	-0.1f, -0.1f, -0.1f,
-	 0.1f, -0.1f, -0.1f,
-	 0.1f, -0.1f,  0.1f,
-	-0.1f,  0.1f,  0.1f,
-	-0.1f,  0.1f, -0.1f,
-	 0.1f,  0.1f, -0.1f,
-	 0.1f,  0.1f,  0.1f
+	-0.1f, -0.1f,  0.1f,  // 0
+	-0.1f, -0.1f, -0.1f,  // 1
+	 0.1f, -0.1f, -0.1f,  // 2
+	 0.1f, -0.1f,  0.1f,  // 3
+	-0.1f,  0.1f,  0.1f,  // 4
+	-0.1f,  0.1f, -0.1f,  // 5
+	 0.1f,  0.1f, -0.1f,  // 6
+	 0.1f,  0.1f,  0.1f	  // 7
 };
 
 GLuint lightIndices[] = {
+	// Bottom face
 	0, 1, 2,
 	0, 2, 3,
+
+	// Front face
 	0, 4, 7,
 	0, 7, 3,
+
+	// Right face
 	3, 7, 6,
 	3, 6, 2,
+
+	// Back face
 	2, 6, 5,
 	2, 5, 1,
+
+	// Left face
 	1, 5, 4,
 	1, 4, 0,
+
+	// Top face
 	4, 5, 6,
 	4, 6, 7
 };
@@ -129,7 +118,7 @@ int main() {
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);  // Check Note.md
 
 	// width x height pixels:
-	GLFWwindow* window = glfwCreateWindow(width, height, "CameraAnd3D", NULL, NULL);
+	GLFWwindow* window = glfwCreateWindow(width, height, "CameraAndLighting", NULL, NULL);
 
 	// In case window fails to create:
 	if (window == NULL) {
@@ -216,8 +205,19 @@ int main() {
 	// Camera object
 	Camera camera(width, height, glm::vec3(0.0f, 0.0f, 2.0f));
 
+	// For color alternating:
+	float prev_time = float(glfwGetTime());
+	float angle = 0.0f;
+
 	// Making sure that the window does not close instantly:
 	while (!glfwWindowShouldClose(window)) {
+
+		float curr_time = float(glfwGetTime());
+		if (curr_time - prev_time >= 0.1f) {
+			angle += 0.1f;
+			prev_time = curr_time;
+		}
+
 		glClearColor(0.07f, 0.13f, 0.17f, 1.0f);  // Background color Navy-blue (RGBA)
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);			  // Cleaning back buffer and assigning it new color
 
@@ -225,6 +225,7 @@ int main() {
 		camera.updateMatrix(45.0f, 0.1f, 100.0f);
 
 		shaderProgram.Activate();
+		glUniform4f(glGetUniformLocation(shaderProgram.ID, "lightColor"), sin(angle), cos(angle), tan(angle), lightColor.w);
 		glUniform3f(glGetUniformLocation(shaderProgram.ID, "camPos"), camera.Position.x, camera.Position.y, camera.Position.z);
 		camera.Matrix(shaderProgram, "camMatrix");
 		pyramidTex.Bind();
@@ -236,6 +237,8 @@ int main() {
 		glDrawElements(GL_TRIANGLES, sizeof(indices) / sizeof(int), GL_UNSIGNED_INT, 0);
 
 		lightShader.Activate();
+		glUniform4f(glGetUniformLocation(lightShader.ID, "lightColor"), sin(angle), cos(angle), tan(angle), lightColor.w);  // Changing color
+
 		camera.Matrix(lightShader, "camMatrix");
 		lightVAO.Bind();
 		glDrawElements(GL_TRIANGLES, sizeof(lightIndices) / sizeof(int), GL_UNSIGNED_INT, 0);

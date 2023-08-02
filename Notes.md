@@ -184,3 +184,9 @@ Provides input to the fragment shader to fill the faces with pixels | Takes inpu
         * This lighting uses [Phong Shading](https://en.wikipedia.org/wiki/Phong_shading)
         * This lighting is similar to diffuse in the sense that a "gradient" of lighting is formed on the object surfaces
         * What makes this lighting different from diffuse is that it also considers reflective properties of the object surfaces and the view direction (direction from which we look at the object)
+
+---
+## Specular Maps
+
+- Specular maps are black and white textures which tell a program how and where specular light should appear on a texture and how strong it should be at that point; lighter a pixel on a specular map is, the more light you will get at that point, and the darker a pixel on a specular map is, the less light you will get at that point.
+

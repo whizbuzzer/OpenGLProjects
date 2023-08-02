@@ -20,7 +20,7 @@
 
 10. Type in:
 	
-	glfw.lib
+	glfw3.lib
 	opengl32.lib
 
 11. Add "glad.c" to "Source Files" in the Solution Explorer
