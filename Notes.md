@@ -186,7 +186,31 @@ Provides input to the fragment shader to fill the faces with pixels | Takes inpu
         * What makes this lighting different from diffuse is that it also considers reflective properties of the object surfaces and the view direction (direction from which we look at the object)
 
 ---
-## Specular Maps
+## Lighting Maps
 
-- Specular maps are black and white textures which tell a program how and where specular light should appear on a texture and how strong it should be at that point; lighter a pixel on a specular map is, the more light you will get at that point, and the darker a pixel on a specular map is, the less light you will get at that point.
+- Just like lighting types, [lighting maps](https://learnopengl.com/Lighting/Lighting-maps) come in 3 types:
+    1. **Diffuse map:**
+        * Used to highlight base material colors of the texture
+    2. **Specular map:**
+        * Used to control reflectivity of an object's surface
+        * Specular maps are black and white textures which tell a program how and where specular light should appear on a texture and how strong it should be at that point; lighter a pixel on a specular map is, the more light you will get at that point, and the darker a pixel on a specular map is, the less light you will get at that point.
 
+---
+## Types of Light Sources
+
+- In real life, if $$lightIntensity=i$$ and $$distanceFromLightSource = d$$ then we have $$i = {1 \over d ^ 2}$$ This is also called the _inverse square law_
+
+- In computer graphics though, we have more complicated equations to better control the properties of light e.g., [Phong Shading](https://en.wikipedia.org/wiki/Phong_shading) and [Goraud Shading](https://en.wikipedia.org/wiki/Gouraud_shading)
+
+- The equation used in this project is $$i = {1 \over a \cdot d^2 + b \cdot d + 1}$$ The quadratic term `a` seems to control the light intensity closest to the light source and the linear term `b` seems to control the darkness intensity further away from the light source
+
+- [Light sources](https://learnopengl.com/Lighting/Light-casters) come in 3 main types:
+    1. **Point:**
+        * Illuminates the environment omnidirectionally/in all directions
+        * Light intensity however gradually decreases/withers with distance
+    2. **Directional:**
+        * Easiest of the three lightings to implement
+        * Showers the object in parellel light rays
+        * Mimics a light source infinitely far away. The further a light source goes from the object, the lesser the adjacent light rays coming from it seem to diverge from each other, and at infinity, the adjacent light rays would be perfectly parellel to each other
+    3. **Spot:**
+        * Only lights a conic area like a flashlight/disc lamp
