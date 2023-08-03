@@ -1,4 +1,4 @@
-/* Main file for Specular maps */
+/* Main file for Light sources implemntations */
 
 #include <iostream>
 #include <glad/glad.h>

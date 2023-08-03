@@ -48,6 +48,8 @@ https://www.khronos.org/opengl/wiki/Shader
 
 - Shaders tell the GPU what to do with the data that we send in. Sadly, OpenGL does not provide defaults for Vertex and Fragment Shaders, so you gotta write your own. Two most commonly used shaders are *Vertex* and *Fragment/Pixel* shaders.
 
+- Layouts, inputs, outputs should be declared in the __SAME ORDER__ in all shaders!!! Although not mandatory, it will prevent you from pulling out your hair
+
 Vertex | Fragment/Pixel
 ---|---
 Corner points of your polygon | Pixels generated between corner points of a polygon
@@ -214,3 +216,13 @@ Provides input to the fragment shader to fill the faces with pixels | Takes inpu
         * Mimics a light source infinitely far away. The further a light source goes from the object, the lesser the adjacent light rays coming from it seem to diverge from each other, and at infinity, the adjacent light rays would be perfectly parellel to each other
     3. **Spot:**
         * Only lights a conic area like a flashlight/disc lamp
+        * It is defined by an inner angle and an outer angle. Inner angle controls central light intensity while outer angle controls border darkness intensity. Together, they give the lighting a nice gradient. Using only one of them makes the light look like a cut-out
+        * Always have the outer angle be greater than the inner angle otherwise the lighting will cast a shadow over where the light is supposed to be and light where the shadow is supposed to be
+
+---
+## Mesh class
+
+- Mesh in OpenGL is a data structure/set which contains generally 3 properties:
+    1. Vertices
+    2. Indices of those vertices
+    3. Textures
