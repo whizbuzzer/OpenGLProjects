@@ -226,3 +226,57 @@ Provides input to the fragment shader to fill the faces with pixels | Takes inpu
     1. Vertices
     2. Indices of those vertices
     3. Textures
+
+---
+## Model Loading
+
+- `.png` and `.jpg` files are usually the standard when it comes to loading images in the Graphics industry, but when it come to 3D models, we have multiple different file formats to use/choose from, many of which are proprietary, such as:
+    1. `.stl`
+    2. `.obj`
+    3. `.fbx`
+    4. `.dae`
+    5. `.3ds`
+    6. `.iges`
+    7. `.x3d`
+    8. `.3mf`
+    9. `.step`
+    10. `.igs`
+    11. `.stp`
+    12. `.vrml`
+    13. `.blend`
+
+- For our project, we will use `.gltf` file format as it is made by the __KHRONOS Group__, who made OpenGL
+
+- [__GLTF__](https://godotengine.org/article/we-should-all-use-gltf-20-export-3d-assets-game-engines/) uses the [__JSON__](https://github.com/nlohmann/json) file structure
+
+- JSON (Javasript Object Notation) files are configuration files that work like dictionaries within dictionaries
+
+- A simplified view of one of the main branches of the JSON tree and the one we care the most about:
+    1. **buffers:**
+        * Present at the top, it stores data
+        * Parent of *bufferViews*
+    2. **bufferViews:**
+        * Child of *buffer*
+        * Tells us which parts of *buffer* we should read i.e. points to the location where data of interest(DOI) is present
+        * Parent of *accessors*
+    3. **accessors:**
+        * Tells us what datatypes we should look for in the location pointed by *bufferViews* e.g. GLuint or vec3
+        * vec3 though is the datatype of vertices as well as normals
+        * Parent of *attributes*
+    4. **attributes:**
+        * Tells us which *accessors* are part of which vertex attributes aka positions, normals, texCoords, etc.
+    5. **primitives:**
+        * Locates accessors of indices of our mesh as indices are crucial to constructing our mesh
+        * Parent of *attributes* and *materials*
+    6. **materials:**
+        * Parent of textures. Not relevant when materials alrady have PBR (Physics Based Rendering) data, which they usually do
+    7. **meshes:**
+        * Parent of *primitives*
+    8. **nodes:**
+        * Parent of *meshes*
+    9. **scenes:**
+        * The setup of the entire environment with models, lighting and everything
+        * Parent of *nodes*
+
+
+
