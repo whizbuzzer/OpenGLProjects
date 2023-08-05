@@ -140,6 +140,7 @@
     <ClInclude Include="..\include\Camera.h" />
     <ClInclude Include="..\include\EBO.h" />
     <ClInclude Include="..\include\Mesh.h" />
+    <ClInclude Include="..\include\Model.h" />
     <ClInclude Include="..\include\shaderClass.h" />
     <ClInclude Include="..\include\Texture.h" />
     <ClInclude Include="..\include\Texture2.h" />
@@ -152,6 +153,7 @@
     <ClCompile Include="..\lib\Camera.cpp" />
     <ClCompile Include="..\lib\EBO.cpp" />
     <ClCompile Include="..\lib\Mesh.cpp" />
+    <ClCompile Include="..\lib\Model.cpp" />
     <ClCompile Include="..\lib\shaderClass.cpp" />
     <ClCompile Include="..\lib\stb.cpp" />
     <ClCompile Include="..\lib\Texture.cpp" />
@@ -159,6 +161,15 @@
     <ClCompile Include="..\lib\VAO.cpp" />
     <ClCompile Include="..\lib\VBO.cpp" />
     <ClCompile Include="src\Main.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\shaders\light.frag" />
+    <None Include="..\shaders\light.vert" />
+    <None Include="..\shaders\model.frag" />
+    <None Include="..\shaders\model.vert" />
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="..\Libraries\include\json\json.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

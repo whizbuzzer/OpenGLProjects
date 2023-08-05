@@ -3,7 +3,7 @@
 #include "Texture2.h"
 
 
-Texture2::Texture2(const char* imagePath, const char* texType, GLenum slot, GLenum format, GLenum pixelType) : type(texType) {
+Texture2::Texture2(const char* imagePath, const char* texType, GLenum slot) : type(texType) {
 	// type = texType;
 	// type_str = textTypeStr;
 	int imgWidth, imgHeight, nColorChannels;
@@ -25,8 +25,26 @@ Texture2::Texture2(const char* imagePath, const char* texType, GLenum slot, GLen
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
 
 
+	// Loading texture based on number of color channels:
+	GLenum format = GL_RGBA;
+	switch (nColorChannels) {
+	case 4:
+		break;
+	case 3:
+		format = GL_RGB;
+		break;
+	case 1:
+		format = GL_RED;
+		break;
+	default:
+		throw std::invalid_argument("Incorrect number of channels. Automatic texture type detection failed.");
+		break;
+	}
+
 	// Generating image texture:
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, imgWidth, imgHeight, 0, format, pixelType, bytes);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, imgWidth, imgHeight, 0, format, GL_UNSIGNED_BYTE, bytes);  // pixelType is GL_UNSIGNED_BYTE 99% of times
+
+	// Generating mipmaps to save memory:
 	glGenerateMipmap(GL_TEXTURE_2D);  // Mimap = smaller resolution versions of the image
 
 	// Unloading image to free memory and unbinding texture

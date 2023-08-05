@@ -136,6 +136,8 @@ Provides input to the fragment shader to fill the faces with pixels | Takes inpu
 
 - [Read this on color channels and pixel datatypes](https://www.khronos.org/opengl/wiki/Image_Format)
 
+- **Mipmap** is a collection of copies of the original texture which are subsequently twice as small than the last one. The concept behind it is that the farther an object goes, the less noticeable its texture becomes. So, using lower resolution textures on faraway objects not only does not affect much the viewing experience, but also prevents production of visible artifacts on faraway objects as well as saves memory.
+
 ---
 ## 3D
 

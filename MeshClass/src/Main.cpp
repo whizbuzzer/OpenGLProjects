@@ -90,8 +90,8 @@ int main() {
 	glViewport(0, 0, width, height);
 
 	Texture2 textures[]{
-		Texture2("../data/planks.png", "diffuse", 0, GL_RGBA, GL_UNSIGNED_BYTE),
-		Texture2("../data/planksSpec.png", "specular", 1, GL_RED, GL_UNSIGNED_BYTE)
+		Texture2("../data/planks.png", "diffuse", 0),
+		Texture2("../data/planksSpec.png", "specular", 1)
 	};
 
 	/* Shader for 3D object */
