@@ -11,9 +11,112 @@ Model::Model(const char* fileName_) : fileName(fileName_) {
 	JSON = json::parse(text);
 
 	data = getData();
+
+	traverseNode(0);  // Second argument not needed as it has a default value
 }
 
 // Methods:
+void Model::Draw(Shader& shader, Camera& camera) {
+	for (unsigned int i = 0; i < meshes.size(); i++) {
+		meshes[i].Mesh::Draw(shader, camera, meshTransforms[i]);
+	}
+}
+
+void Model::loadMesh(unsigned int meshIndex) {
+	// Getting indices of all vertex accessors:
+	unsigned int posAccInd = JSON["meshes"][meshIndex]["primitives"][0]["attributes"]["POSITION"];
+	unsigned int normalAccInd = JSON["meshes"][meshIndex]["primitives"][0]["attributes"]["NORMAL"];
+	unsigned int texAccInd = JSON["meshes"][meshIndex]["primitives"][0]["attributes"]["TEXCOORD_0"];
+	unsigned int indAccInd = JSON["meshes"][meshIndex]["primitives"][0]["indices"];
+
+	std::vector<float> posVec = getFloats(JSON["accessors"][posAccInd]);
+	std::vector<glm::vec3> positions = groupFloatsVec3(posVec);
+	std::vector<float> normalVec = getFloats(JSON["accessors"][normalAccInd]);
+	std::vector<glm::vec3> normals = groupFloatsVec3(normalVec);
+	std::vector<float> texVec = getFloats(JSON["accessors"][texAccInd]);
+	std::vector<glm::vec2> texCoords = groupFloatsVec2(texVec);
+
+	// Preparing arguments to create meshes:
+	std::vector<Vertex> vertices = assembleVertices(positions, normals, texCoords);
+	std::vector<GLuint> indices = getIndices(JSON["accessors"][indAccInd]);
+	std::vector<Texture2> textures = getTextures();
+
+	// Creating and loading meshes:
+	meshes.push_back(Mesh(vertices, indices, textures));
+}
+
+void Model::traverseNode(unsigned int nextNode, glm::mat4 matrix) {
+	// Current node
+	json node = JSON["nodes"][nextNode];
+
+	// Extracting our matrices if they exist:
+	glm::vec3 translation = glm::vec3(0.0f, 0.0f, 0.0f);
+	if (node.find("translation") != node.end()) {  // Similar method to set/map!
+		float translValues[3];
+		for (unsigned int i = 0; i < node["translation"].size(); i++)
+			translValues[i] = (node["translation"][i]);
+		translation = glm::make_vec3(translValues);
+	}
+
+	glm::quat rotation = glm::quat(1.0f, 0.0f, 0.0f, 0.0f);
+	if (node.find("rotation") != node.end()) {  // Similar method to set/map!
+		float rotValues[4] = {  // Order is different because GLM forms quaternions as W->X->Y->Z
+			node["rotation"][3],
+			node["rotation"][0],
+			node["rotation"][1],
+			node["rotation"][2]
+		};
+		rotation = glm::make_quat(rotValues);
+	}
+
+	glm::vec3 scale = glm::vec3(1.0f, 1.0f, 1.0f);
+	if (node.find("scale") != node.end()) {  // Similar method to set/map!
+		float scaleValues[3];
+		for (unsigned int i = 0; i < node["scale"].size(); i++)
+			scaleValues[i] = (node["scale"][i]);
+		scale = glm::make_vec3(scaleValues);
+	}
+
+	glm::mat4 model = glm::mat4(1.0f);
+	if (node.find("matrix") != node.end()) {  // Similar method to set/map!
+		float modelValues[16];  // 4x4
+		for (unsigned int i = 0; i < node["matrix"].size(); i++)
+			modelValues[i] = (node["matrix"][i]);
+		model = glm::make_mat4(modelValues);
+	}
+
+	// Preparing and combining all transformations for the next node:
+	glm::mat4 translMat = glm::mat4(1.0f);
+	glm::mat4 rotMat = glm::mat4(1.0f);
+	glm::mat4 scaleMat = glm::mat4(1.0f);
+
+	translMat = glm::translate(translMat, translation);
+	rotMat = glm::mat4_cast(rotation);  // To convert from quaternion to 4x4
+	scaleMat = glm::scale(scale);
+
+	glm::mat4 nextNodeMatrix = matrix * model * translMat * rotMat * scaleMat;
+
+	// Checking if a node contains a mesh, and then loading it accordingly:
+	if (node.find("mesh") != node.end()) {
+		meshTranslations.push_back(translation);
+		meshRotations.push_back(rotation);
+		meshScales.push_back(scale);
+		meshTransforms.push_back(nextNodeMatrix);
+
+		loadMesh(node["mesh"]);
+	}
+
+	if (node.find("children") != node.end()) {
+		for (unsigned int i = 0; i < node["children"].size(); i++) {
+			traverseNode(node["children"][i], nextNodeMatrix);
+		}
+
+		/*for (auto child:node["children"]) {
+			traverseNode(child, nextNodeMatrix);
+		}*/
+	}
+}
+
 std::vector<unsigned char> Model::getData() {
 	std::string bytesText;  // Holds raw text
 	// "uri" key gives us name of the .bin file which contains the binary data
@@ -139,11 +242,55 @@ std::vector<GLuint> Model::getIndices(json accessor) {
 	return indicesVec;
 }
 
+std::vector<Texture2> Model::getTextures() {
+	std::string fileStr = std::string(fileName);
+	std::string fileDirectory = fileStr.substr(0, fileStr.find_last_of('/') + 1);  // Why?
+
+	std::vector<Texture2> textures;
+
+	for (unsigned int i = 0; i < JSON["images"].size(); i++) {
+		// Directly accessing the "images" key to get an array of Uniform Resource Identifiers (URI):
+		std::string texturePath = JSON["images"][i]["uri"];
+
+		// Skipping textures which have the same name as a texture among loaded textures i.e. a texture that has already been loaded:
+		bool skip = false;
+		for (unsigned int j = 0; j < loadedTexNames.size(); j++) {
+			if (loadedTexNames[j] == texturePath) {
+				textures.push_back(loadedTextures[j]);
+				skip = true;
+				break;
+			}
+		}
+
+
+		if (!skip) {
+			// Checking for diffuse/specular maps:
+			// npos is a const static member of string datatype.
+			// It indicates highest possible value for element of type size_t i.e. end of string
+			// Return value of .find() != npos means that a certain string exists.
+			if (texturePath.find("baseColor") != std::string::npos) {  // baseColor string exists -> Diffuse map found!
+				Texture2 diffuse = Texture2((fileDirectory + texturePath).c_str(), "diffuse", loadedTexNames.size());
+				textures.push_back(diffuse);
+				loadedTextures.push_back(diffuse);
+				loadedTexNames.push_back(texturePath);
+			}
+			else if (texturePath.find("metallicRoughness") != std::string::npos) {  // Specular map found!
+				Texture2 specular = Texture2((fileDirectory + texturePath).c_str(), "specular", loadedTexNames.size());
+				textures.push_back(specular);
+				loadedTextures.push_back(specular);
+				loadedTexNames.push_back(texturePath);
+			}
+		}
+	}
+
+	return textures;
+}
+
 // assembling vertices from gathered data:
 std::vector<Vertex> Model::assembleVertices(
-	std::vector<glm::vec3> positions,
-	std::vector<glm::vec3> normals,
-	std::vector<glm::vec2> texCoords,
+		std::vector<glm::vec3> positions,
+		std::vector<glm::vec3> normals,
+		std::vector<glm::vec2> texCoords
 	) {
 	std::vector<Vertex> vertices;
 
@@ -155,9 +302,9 @@ std::vector<Vertex> Model::assembleVertices(
 				texCoords[i]
 			}
 		);
-
-		return vertices;
 	}
+
+	return vertices;
 }
 
 // Array to vector converters:

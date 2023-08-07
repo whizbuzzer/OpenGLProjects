@@ -2,13 +2,15 @@
 
 out vec4 FragColor;  // RGBA
 
+
+in vec3 currPos;
+
+in vec3 Normal;
+
 in vec3 color;  // Inputs and outputs MUST have the same name
 
 in vec2 texCoord;
 
-in vec3 Normal;
-
-in vec3 currPos;
 
 uniform sampler2D diffuse0;  // For texture/diffuse map
 
@@ -31,7 +33,7 @@ vec4 pointLight() {
 	float b = 0.7;  // Linear term. Seems to change intensity of darkness away from light
 
 	// Light intensity calculation using out equation:
-	float intensity = 1 / (a * dist * dist + b * dist + 1);
+	float intensity = 1.0f / (a * dist * dist + b * dist + 1.0f);
 
 	// Ambient lighting to simulate light scattering simply and avoid pitch-black surfaces which do not face the light source:
 	float ambient = 0.20f;   // Arbitrary value

@@ -4,6 +4,7 @@
 layout (location = 0) in vec3 aPos;  // Helps OpenGL read the vertex data it receives
 
 uniform mat4 model;
+
 uniform mat4 camMatrix;
 
 void main()

@@ -280,5 +280,5 @@ Provides input to the fragment shader to fill the faces with pixels | Takes inpu
         * The setup of the entire environment with models, lighting and everything
         * Parent of *nodes*
 
-
+- Expressing model rotations as quaternions helps avoid gimbal lock. Quaternions are represented as: $$a + b \cdot i + c \cdot j + d \cdot k$$ Where `a, b, c and d` are real numbers and `i, j and k` are basis vectors/elements which are imaginary numbers such that $$i^2 = j^2 = k^2 = -1$$
 

@@ -16,8 +16,8 @@ Mesh::Mesh(std::vector<Vertex>& vertices_,
 	// Linking vertex attributes:
 	VAO.LinkAttrib(VBO, 0, 3, GL_FLOAT, sizeof(Vertex), (void*)0);					  // Positions
 	VAO.LinkAttrib(VBO, 1, 3, GL_FLOAT, sizeof(Vertex), (void*)(3 * sizeof(float)));  // Colors
-	VAO.LinkAttrib(VBO, 2, 2, GL_FLOAT, sizeof(Vertex), (void*)(6 * sizeof(float)));  // Normals
-	VAO.LinkAttrib(VBO, 3, 3, GL_FLOAT, sizeof(Vertex), (void*)(9 * sizeof(float)));  // Texture coordinates
+	VAO.LinkAttrib(VBO, 2, 3, GL_FLOAT, sizeof(Vertex), (void*)(6 * sizeof(float)));  // Normals
+	VAO.LinkAttrib(VBO, 3, 2, GL_FLOAT, sizeof(Vertex), (void*)(9 * sizeof(float)));  // Texture coordinates
 
 	// To prevent accidental modification:
 	VAO.Unbind();
@@ -26,11 +26,14 @@ Mesh::Mesh(std::vector<Vertex>& vertices_,
 }
 
 // Methods:
-void Mesh::Draw(Shader& shader, Camera& camera) {
+void Mesh::Draw(
+		Shader& shader,
+		Camera& camera
+	) {
 	shader.Activate();
 	VAO.Bind();
 
-	// Keeping count for diffuse and specular maps:
+	// Keeping counts for diffuse and specular maps:
 	unsigned int numDiffuse = 0, numSpecular = 0;
 
 	for (unsigned int i = 0; i < textures.size(); i++) {

@@ -2,13 +2,15 @@
 
 out vec4 FragColor;  // RGBA
 
+
+in vec3 currPos;
+
+in vec3 Normal;
+
 in vec3 color;  // Inputs and outputs MUST have the same name
 
 in vec2 texCoord;
 
-in vec3 Normal;
-
-in vec3 currPos;
 
 uniform sampler2D diffuse0;  // For texture/diffuse map
 

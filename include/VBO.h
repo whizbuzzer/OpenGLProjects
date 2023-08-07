@@ -25,6 +25,7 @@ public:
 	Byte size of vertices is stored in "GLsizeiptr" datatype*/
 	VBO(GLfloat* vertices, GLsizeiptr size);
 
+	// Alternative:
 	VBO(std::vector<Vertex>& vertices);
 
 	void Bind();

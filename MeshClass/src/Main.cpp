@@ -12,10 +12,10 @@ const unsigned int width = 800, height = 800;
  */
 Vertex vertices[] = {
 		   // COORDINATES                 / COLORS                     / NORMALS                      / TEXTURE COORDS		  //
-	Vertex{glm::vec3(-1.0f,  0.0f,  1.0f), glm::vec3(0.0f, 0.0f, 0.0f),  glm::vec3(0.0f, 1.0f,  0.0f), glm::vec2(0.0f, 0.0f)},
-	Vertex{glm::vec3(-1.0f,  0.0f, -1.0f), glm::vec3(0.0f, 0.0f, 0.0f),  glm::vec3(0.0f, 1.0f,  0.0f), glm::vec2(0.0f, 1.0f)},
-	Vertex{glm::vec3( 1.0f,  0.0f, -1.0f), glm::vec3(0.0f, 0.0f, 0.0f),  glm::vec3(0.0f, 1.0f,  0.0f), glm::vec2(1.0f, 1.0f)},
-	Vertex{glm::vec3( 1.0f,  0.0f,  1.0f), glm::vec3(0.0f, 0.0f, 0.0f),  glm::vec3(0.0f, 1.0f,  0.0f), glm::vec2(1.0f, 0.0f)},
+	Vertex{glm::vec3(-1.0f,  0.0f,  1.0f), glm::vec3(0.0f, 1.0f, 0.0f),  glm::vec3(1.0f, 1.0f,  1.0f), glm::vec2(0.0f, 0.0f)},
+	Vertex{glm::vec3(-1.0f,  0.0f, -1.0f), glm::vec3(0.0f, 1.0f, 0.0f),  glm::vec3(1.0f, 1.0f,  1.0f), glm::vec2(0.0f, 1.0f)},
+	Vertex{glm::vec3( 1.0f,  0.0f, -1.0f), glm::vec3(0.0f, 1.0f, 0.0f),  glm::vec3(1.0f, 1.0f,  1.0f), glm::vec2(1.0f, 1.0f)},
+	Vertex{glm::vec3( 1.0f,  0.0f,  1.0f), glm::vec3(0.0f, 1.0f, 0.0f),  glm::vec3(1.0f, 1.0f,  1.0f), glm::vec2(1.0f, 0.0f)},
 };  // It's okay if normals don't have unit length here as they will be normalized later in the shader
 
 GLuint indices[] = {

@@ -13,6 +13,7 @@ using json = nlohmann::json;
 
 class Model {
 public:
+	// Loads in model from a file and stores that data in 'data', 'JSON' and 'fileName' attributes:
 	Model(const char* fileName_);
 
 	void Draw(Shader& shader, Camera& camera);  // No includes needed as shaderClass.h and Camera.h are already included in Mesh.h
@@ -22,16 +23,17 @@ private:
 	std::vector<unsigned char> data;  // Stores model points
 	json JSON;
 
-	// Meshes and their transformations:
+	// For avoiding storing of duplicate textures:
+	std::vector<std::string> loadedTexNames;  // To determine whether or not we have loaded a texture
+	std::vector<Texture2> loadedTextures;     // To store textures for all meshes to use
+
+	// Meshes and their pose data:
 	std::vector<Mesh> meshes;
 	std::vector<glm::vec3> meshTranslations;
-	std::vector<glm::quat> meshRotations;
+	std::vector<glm::quat> meshRotations;  // Quaternions help avoid gimbal lock. a + bi + cj + dk
 	std::vector<glm::vec3> meshScales;
-	std::vector<glm::mat4> meshTransformations;
+	std::vector<glm::mat4> meshTransforms;  // Transformation matrix. Accounts for whether the former 3 properties would be used independently or together
 
-	// Ensuring textures get loaded only once:
-	std::vector<std::string> loadedTexNames;
-	std::vector<Texture2> loadedTextures;
 
 	// Loading a single mesh by its index:
 	void loadMesh(unsigned int meshIndex);

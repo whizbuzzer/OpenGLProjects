@@ -26,6 +26,45 @@ Texture2::Texture2(const char* imagePath, const char* texType, GLenum slot) : ty
 
 
 	// Loading texture based on number of color channels:
+	/*if (nColorChannels == 4) {
+		glTexImage2D(
+			GL_TEXTURE_2D,
+			0,
+			GL_RGBA,
+			imgWidth,
+			imgHeight,
+			0,
+			GL_RGBA,
+			GL_UNSIGNED_BYTE,
+			bytes
+		);
+	} else if (nColorChannels == 3) {
+		glTexImage2D(
+			GL_TEXTURE_2D,
+			0,
+			GL_RGBA,
+			imgWidth,
+			imgHeight,
+			0,
+			GL_RGB,
+			GL_UNSIGNED_BYTE,
+			bytes
+		);
+	} else if (nColorChannels == 1) {
+		glTexImage2D(
+			GL_TEXTURE_2D,
+			0,
+			GL_RGBA,
+			imgWidth,
+			imgHeight,
+			0,
+			GL_RED,
+			GL_UNSIGNED_BYTE,
+			bytes
+		);
+	} else
+		throw std::invalid_argument("Incorrect number of channels. Automatic texture type detection failed."); */
+	
 	GLenum format = GL_RGBA;
 	switch (nColorChannels) {
 	case 4:
@@ -43,6 +82,7 @@ Texture2::Texture2(const char* imagePath, const char* texType, GLenum slot) : ty
 
 	// Generating image texture:
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, imgWidth, imgHeight, 0, format, GL_UNSIGNED_BYTE, bytes);  // pixelType is GL_UNSIGNED_BYTE 99% of times
+	
 
 	// Generating mipmaps to save memory:
 	glGenerateMipmap(GL_TEXTURE_2D);  // Mimap = smaller resolution versions of the image

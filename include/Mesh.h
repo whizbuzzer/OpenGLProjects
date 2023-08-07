@@ -1,3 +1,7 @@
+/* Mesh class definition
+ * UPDATE: Draw function rehauled. Now contains mesh pose data as arguments.
+ */
+
 #ifndef MESH_CLASS_H
 #define MESH_CLASS_H
 
@@ -19,7 +23,10 @@ public:
 
 	Mesh(std::vector<Vertex>& vertices_, std::vector<GLuint>& indices_, std::vector<Texture2>& textures_);
 
-	void Draw(Shader& shader, Camera& camera);
+	void Draw(
+		Shader& shader,
+		Camera& camera
+	);
 };
 
 #endif // !MESH_CLASS_H
