@@ -2,8 +2,8 @@
  * UPDATE: Draw function rehauled. Now contains mesh pose data as arguments.
  */
 
-#ifndef MESH_CLASS_H
-#define MESH_CLASS_H
+#ifndef MESH2_CLASS_H
+#define MESH2_CLASS_H
 
 #include <string>
 
@@ -12,7 +12,7 @@
 #include "Camera.h"
 #include "Texture2.h"
 
-class Mesh {
+class Mesh2 {
 public:
 	// All properties initialized as vectors for flexibility. <vector> has already been included in VBO.h:
 	std::vector<Vertex> vertices;
@@ -21,7 +21,7 @@ public:
 
 	VAO VAO;
 
-	Mesh(std::vector<Vertex>& vertices_, std::vector<GLuint>& indices_, std::vector<Texture2>& textures_);
+	Mesh2(std::vector<Vertex>& vertices_, std::vector<GLuint>& indices_, std::vector<Texture2>& textures_);
 
 	void Draw(
 		Shader& shader,

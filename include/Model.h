@@ -5,7 +5,7 @@
 
 #include <json/json.h>
 
-#include "Mesh.h"
+#include "Mesh2.h"
 
 
 // Creating alias
@@ -28,7 +28,7 @@ private:
 	std::vector<Texture2> loadedTextures;     // To store textures for all meshes to use
 
 	// Meshes and their pose data:
-	std::vector<Mesh> meshes;
+	std::vector<Mesh2> meshes;
 	std::vector<glm::vec3> meshTranslations;
 	std::vector<glm::quat> meshRotations;  // Quaternions help avoid gimbal lock. a + bi + cj + dk
 	std::vector<glm::vec3> meshScales;

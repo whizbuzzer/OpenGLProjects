@@ -1,4 +1,4 @@
-/* Main file for Mesh class implementation */
+/* Main file for Model class implementation */
 
 #include "Model.h"
 

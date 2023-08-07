@@ -7,7 +7,7 @@
 
 // Constructor
 Model::Model(const char* fileName_) : fileName(fileName_) {
-	std::string text = get_file_contents(fileName_);
+	std::string text = get_file_contents(fileName);
 	JSON = json::parse(text);
 
 	data = getData();
@@ -18,7 +18,7 @@ Model::Model(const char* fileName_) : fileName(fileName_) {
 // Methods:
 void Model::Draw(Shader& shader, Camera& camera) {
 	for (unsigned int i = 0; i < meshes.size(); i++) {
-		meshes[i].Mesh::Draw(shader, camera, meshTransforms[i]);
+		meshes[i].Mesh2::Draw(shader, camera, meshTransforms[i]);
 	}
 }
 
@@ -29,6 +29,7 @@ void Model::loadMesh(unsigned int meshIndex) {
 	unsigned int texAccInd = JSON["meshes"][meshIndex]["primitives"][0]["attributes"]["TEXCOORD_0"];
 	unsigned int indAccInd = JSON["meshes"][meshIndex]["primitives"][0]["indices"];
 
+	// Preparing vertices components:
 	std::vector<float> posVec = getFloats(JSON["accessors"][posAccInd]);
 	std::vector<glm::vec3> positions = groupFloatsVec3(posVec);
 	std::vector<float> normalVec = getFloats(JSON["accessors"][normalAccInd]);
@@ -42,7 +43,7 @@ void Model::loadMesh(unsigned int meshIndex) {
 	std::vector<Texture2> textures = getTextures();
 
 	// Creating and loading meshes:
-	meshes.push_back(Mesh(vertices, indices, textures));
+	meshes.push_back(Mesh2(vertices, indices, textures));
 }
 
 void Model::traverseNode(unsigned int nextNode, glm::mat4 matrix) {
@@ -60,7 +61,7 @@ void Model::traverseNode(unsigned int nextNode, glm::mat4 matrix) {
 
 	glm::quat rotation = glm::quat(1.0f, 0.0f, 0.0f, 0.0f);
 	if (node.find("rotation") != node.end()) {  // Similar method to set/map!
-		float rotValues[4] = {  // Order is different because GLM forms quaternions as W->X->Y->Z
+		float rotValues[4] = {  // Order is different because GLM forms quaternions as W(3)->X(0)->Y(1)->Z(2)
 			node["rotation"][3],
 			node["rotation"][0],
 			node["rotation"][1],
@@ -123,7 +124,7 @@ std::vector<unsigned char> Model::getData() {
 	std::string uri = JSON["buffers"][0]["uri"];
 
 	std::string fileNameStr = std::string(fileName);
-	std::string fileDirectory = fileNameStr.substr(0, fileNameStr.find_last_of('/') + 1);
+	std::string fileDirectory = fileNameStr.substr(0, fileNameStr.find_last_of('/') + 1);  // Everything but the file name
 
 	// Getting the bytes data:
 	bytesText = get_file_contents((fileDirectory + uri).c_str());
@@ -198,7 +199,7 @@ std::vector<float> Model::getFloats(json accessor) {
 }
 
 std::vector<GLuint> Model::getIndices(json accessor) {
-	unsigned int buffViewInd = accessor.value("bufferView", 1);    // Index to our bufferView of interest inside the complete data
+	unsigned int buffViewInd = accessor.value("bufferView", 0);    // Index to our bufferView of interest inside the complete data
 	unsigned int accByteOffset = accessor.value("byteOffset", 0);  // accessor byte offset. Tells us from what index in the bufferView to look at the data w.r.t the beginning of the buffer
 
 	// These two values always exist in GLTF files so no default/backup value required
@@ -211,7 +212,7 @@ std::vector<GLuint> Model::getIndices(json accessor) {
 
 	unsigned int dataBeginning = byteOffset + accByteOffset;
 
-	std::vector<GLuint> indicesVec;
+	std::vector<GLuint> indices;
 
 	// 5125 = unsigned int
 	// 5123 = unsigned short
@@ -221,30 +222,30 @@ std::vector<GLuint> Model::getIndices(json accessor) {
 			unsigned char bytes[] = { data[i++], data[i++], data[i++], data[i++] };  // Incrementing here to get { data[1], data[2], data[3], data[4] }, etc.
 			unsigned int value;
 			std::memcpy(&value, bytes, sizeof(unsigned int));  // Transforms unsigned char array of bytes int float and stores them in the float value
-			indicesVec.push_back((GLuint)value);
+			indices.push_back((GLuint)value);
 		}
 	} else if (componentType == 5123) {
 		for (unsigned int i = dataBeginning; i < byteOffset + accByteOffset + count * 2; i) {
 			unsigned char bytes[] = { data[i++], data[i++] };
 			unsigned short value;
 			std::memcpy(&value, bytes, sizeof(unsigned short));
-			indicesVec.push_back((GLuint)value);
+			indices.push_back((GLuint)value);
 		}
 	} else if (componentType == 5122) {
 		for (unsigned int i = dataBeginning; i < byteOffset + accByteOffset + count * 2; i) {
 			unsigned char bytes[] = { data[i++], data[i++] };
 			short value;
 			std::memcpy(&value, bytes, sizeof(short));
-			indicesVec.push_back((GLuint)value);
+			indices.push_back((GLuint)value);
 		}
 	}
 
-	return indicesVec;
+	return indices;
 }
 
 std::vector<Texture2> Model::getTextures() {
 	std::string fileStr = std::string(fileName);
-	std::string fileDirectory = fileStr.substr(0, fileStr.find_last_of('/') + 1);  // Why?
+	std::string fileDirectory = fileStr.substr(0, fileStr.find_last_of('/') + 1);  // To get everything but the file name
 
 	std::vector<Texture2> textures;
 
@@ -269,13 +270,13 @@ std::vector<Texture2> Model::getTextures() {
 			// It indicates highest possible value for element of type size_t i.e. end of string
 			// Return value of .find() != npos means that a certain string exists.
 			if (texturePath.find("baseColor") != std::string::npos) {  // baseColor string exists -> Diffuse map found!
-				Texture2 diffuse = Texture2((fileDirectory + texturePath).c_str(), "diffuse", loadedTexNames.size());
+				Texture2 diffuse = Texture2((fileDirectory + texturePath).c_str(), "diffuse", loadedTextures.size());
 				textures.push_back(diffuse);
 				loadedTextures.push_back(diffuse);
 				loadedTexNames.push_back(texturePath);
 			}
 			else if (texturePath.find("metallicRoughness") != std::string::npos) {  // Specular map found!
-				Texture2 specular = Texture2((fileDirectory + texturePath).c_str(), "specular", loadedTexNames.size());
+				Texture2 specular = Texture2((fileDirectory + texturePath).c_str(), "specular", loadedTextures.size());
 				textures.push_back(specular);
 				loadedTextures.push_back(specular);
 				loadedTexNames.push_back(texturePath);
@@ -295,7 +296,8 @@ std::vector<Vertex> Model::assembleVertices(
 	std::vector<Vertex> vertices;
 
 	for (int i = 0; i < positions.size(); i++) {
-		vertices.push_back(Vertex{
+		vertices.push_back(
+			Vertex{
 				positions[i],
 				normals[i],
 				glm::vec3(1.0f, 1.0f, 1.0f),  // Color. Not custom declared as vertex colors are uncommon in 3D models.

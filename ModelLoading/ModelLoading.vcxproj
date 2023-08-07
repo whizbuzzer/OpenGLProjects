@@ -139,7 +139,7 @@
   <ItemGroup>
     <ClInclude Include="..\include\Camera.h" />
     <ClInclude Include="..\include\EBO.h" />
-    <ClInclude Include="..\include\Mesh.h" />
+    <ClInclude Include="..\include\Mesh2.h" />
     <ClInclude Include="..\include\Model.h" />
     <ClInclude Include="..\include\shaderClass.h" />
     <ClInclude Include="..\include\Texture.h" />
@@ -152,7 +152,7 @@
     <ClCompile Include="..\glad.c" />
     <ClCompile Include="..\lib\Camera.cpp" />
     <ClCompile Include="..\lib\EBO.cpp" />
-    <ClCompile Include="..\lib\Mesh.cpp" />
+    <ClCompile Include="..\lib\Mesh2.cpp" />
     <ClCompile Include="..\lib\Model.cpp" />
     <ClCompile Include="..\lib\shaderClass.cpp" />
     <ClCompile Include="..\lib\stb.cpp" />

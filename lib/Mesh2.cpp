@@ -1,10 +1,10 @@
 /* Mesh class definition file */
 
-#include "Mesh.h"
+#include "Mesh2.h"
 
 
 // Constructor:
-Mesh::Mesh(std::vector<Vertex>& vertices_,
+Mesh2::Mesh2(std::vector<Vertex>& vertices_,
 	std::vector<GLuint>& indices_,
 	std::vector<Texture2>& textures_) : vertices(vertices_), indices(indices_), textures(textures_) {
 	VAO.Bind();
@@ -26,7 +26,7 @@ Mesh::Mesh(std::vector<Vertex>& vertices_,
 }
 
 // Methods:
-void Mesh::Draw(
+void Mesh2::Draw(
 		Shader& shader,
 		Camera& camera,
 		glm::mat4 meshTransform,
